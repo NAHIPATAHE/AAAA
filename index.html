@@ -1,97 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Prediction System</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Big and Small Prediction</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+      color: #ffffff;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .login-container, .container {
+      text-align: center;
+      padding: 30px;
+      background-color: rgba(30, 30, 30, 0.85);
+      border-radius: 10px;
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+    }
+
+    .input-field {
+      padding: 12px;
+      margin: 10px 0;
+      width: 90%;
+      max-width: 300px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #444;
+      color: #ffffff;
+      background-color: #333333;
+    }
+
+    .button {
+      padding: 12px 20px;
+      font-size: 18px;
+      color: #ffffff;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .get-pass-button, .adjust-period-button {
+      padding: 12px 20px;
+      font-size: 18px;
+      color: #ffffff;
+      background-color: #FF5733;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .back-to-login-button {
+      padding: 12px 20px;
+      font-size: 18px;
+      color: #ffffff;
+      background-color: #28a745;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .notice {
+      background-color: rgba(255, 204, 0, 0.2);
+      border: 1px solid #ffcc00;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .period-box {
+      display: inline-block;
+      padding: 15px 25px;
+      border: 3px solid #ff4d4d;
+      border-radius: 10px;
+      font-size: 24px;
+      color: #ff4d4d;
+      font-weight: bold;
+      margin-top: 20px;
+      background-color: rgba(255, 77, 77, 0.2);
+    }
+
+    .prediction {
+      margin-top: 30px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .spacing {
+      margin-top: 15px;
+    }
+
+    /* History List Styles */
+    .history-container {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    .history-item {
+      padding: 10px;
+      border-bottom: 1px solid #444;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #333;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      color: #fff;
+      width: 300px;
+    }
+
+    .modal-button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .modal-input {
+      padding: 12px;
+      font-size: 16px;
+      width: 100%;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background-color: #333;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Login Container -->
-        <div id="loginContainer" class="card">
-            <h2>Login</h2>
-            <input type="text" id="userId" placeholder="User ID" class="input-field" aria-label="User ID">
-            <input type="password" id="password" placeholder="Password" class="input-field" aria-label="Password">
-            <button class="btn primary-btn" onclick="login()">Login</button>
-            <button class="btn secondary-btn" onclick="showRegisterForm()">Register</button>
-            <button class="btn info-btn" onclick="showGetPassInfo()">Info</button>
-        </div>
+  <!-- Login Page -->
+  <div class="login-container" id="loginContainer">
+    <h2>Login</h2>
+    <input type="text" id="userId" class="input-field" placeholder="User ID" required>
+    <input type="password" id="password" class="input-field" placeholder="Password" required>
+    <button class="button" onclick="login()">Login</button>
+    <button class="get-pass-button" id="getPassButton" onclick="showGetPassInfo()">Get Pass</button>
+  </div>
 
-        <!-- Register Container -->
-        <div id="registerContainer" class="card" style="display: none;">
-            <h2>Register</h2>
-            <input type="text" id="newUserId" placeholder="New User ID" class="input-field" aria-label="New User ID">
-            <input type="password" id="newPassword" placeholder="New Password" class="input-field" aria-label="New Password">
-            <input type="password" id="confirmPassword" placeholder="Confirm Password" class="input-field" aria-label="Confirm Password">
-            <button class="btn primary-btn" onclick="register()">Register</button>
-            <button class="btn secondary-btn" onclick="backToLogin()">Back</button>
-        </div>
+  <!-- Prediction Page -->
+  <div class="container" id="predictionContainer" style="display: none;">
+    <div class="period-box" id="periodNumber">Period: 0003</div>
+    <div class="prediction" id="prediction">--</div>
+    <button class="adjust-period-button" onclick="openAdjustPeriodModal()">Adjust Period</button>
+    <div class="history-container" id="historyList"></div>
+  </div>
 
-        <!-- Prediction Container -->
-        <div id="predictionContainer" class="card" style="display: none;">
-            <div class="header">
-                <h2>Prediction Dashboard</h2>
-                <button class="btn logout-btn" onclick="logout()">Logout</button>
-            </div>
-            <div class="profile-section">
-                <p>Welcome, <span id="currentUser">User</span>!</p>
-                <label class="switch" title="Toggle Dark Mode">
-                    <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div id="periodNumber" class="info-box">Period: 0000</div>
-            <div id="prediction" class="prediction-box">[Waiting for prediction]</div>
-            <button class="btn primary-btn" onclick="openAdjustPeriodModal()">Adjust Period</button>
-            <div class="history-section">
-                <h3>Prediction History</h3>
-                <input type="text" id="historyFilter" placeholder="Filter by period or date" class="input-field" oninput="filterHistory()">
-                <ul id="historyList" class="history-list"></ul>
-                <button class="btn info-btn" onclick="exportHistory()">Export History</button>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div id="adminContainer" class="card" style="display: none;">
-            <div class="header">
-                <h2>Admin Dashboard</h2>
-                <button class="btn logout-btn" onclick="logout()">Logout</button>
-            </div>
-            <div class="admin-stats">
-                <p>Total Users: <span id="totalUsers">0</span></p>
-                <p>Total Predictions: <span id="totalPredictions">0</span></p>
-            </div>
-            <div class="user-list">
-                <h3>Manage Users</h3>
-                <ul id="userList" class="history-list"></ul>
-                <button class="btn danger-btn" onclick="clearUsers()">Clear All Users</button>
-            </div>
-        </div>
-
-        <!-- Error Modal -->
-        <div id="errorModal" class="modal">
-            <div class="modal-content">
-                <h3>Error</h3>
-                <p class="error-message">An error occurred</p>
-                <button class="btn primary-btn" onclick="closeModal()">Close</button>
-            </div>
-        </div>
-
-        <!-- Adjust Period Modal -->
-        <div id="adjustPeriodModal" class="modal">
-            <div class="modal-content">
-                <h3>Adjust Period</h3>
-                <input type="number" id="newPeriod" placeholder="Enter new period number" class="input-field" aria-label="New Period">
-                <button class="btn primary-btn" onclick="updatePeriod()">Update</button>
-                <button class="btn secondary-btn" onclick="closeAdjustPeriodModal()">Cancel</button>
-            </div>
-        </div>
-
-        <!-- Toast Notification -->
-        <div id="toast" class="toast"></div>
+  <!-- Modal for Incorrect Password -->
+  <div class="modal" id="errorModal">
+    <div class="modal-content">
+      <h2>Incorrect Password</h2>
+      <p>Please try again.</p>
+      <button class="modal-button" onclick="closeModal()">Close</button>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- Modal for Adjusting Period -->
+  <div class="modal" id="adjustPeriodModal">
+    <div class="modal-content">
+      <h2>Adjust Period</h2>
+      <input type="number" id="newPeriod" class="modal-input" placeholder="Enter new period number" required>
+      <button class="modal-button" onclick="updatePeriod()">Update Period</button>
+      <button class="modal-button" onclick="closeAdjustPeriodModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    function getExpectedPassword() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}${month}${day}TV`;
+    }
+
+    function login() {
+      const userId = document.getElementById("userId").value;
+      const password = document.getElementById("password").value;
+      const correctPassword = getExpectedPassword();
+
+      if (password === correctPassword) {
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("predictionContainer").style.display = "block";
+        initializePeriod();
+        startAutoPrediction();
+      } else {
+        showErrorModal();
+      }
+    }
+
+    function showGetPassInfo() {
+      const loginContainer = document.getElementById("loginContainer");
+      loginContainer.innerHTML = `
+        <div class="container">
+          <h2>NOTICE</h2>
+          <div class="notice">
+            <p>PERFORMANCE DEPENDS UPON DEPOSIT :</p>
+            <ul>
+              <li>1000 == 40% WORK</li>
+              <li>2000 == 60% WORK</li>
+              <li>5000 == 80% WORK</li>
+              <li>10000 == 90% WORK</li>
+              <li>15000 == 99% WORK</li>
+            </ul>
+          </div>
+          <a href="https://bmbin.com/#/register?invitationCode=15823266523" class="button">Register & Deposit</a>
+          <div class="spacing"></div>
+          <br>
+          <a href="https://t.me/TeamEarning_bot" class="button contact-button">Message for Pass</a>
+          <button class="back-to-login-button" onclick="backToLogin()">Back to Login</button>
+          <h3>HIGH DEPOSIT HIGH PERFORMANCE</h3>
+        </div>`;
+    }
+
+    function backToLogin() {
+      location.reload();
+    }
+
+    let periodNumber;
+    let timer;
+    let history = [];
+
+    function startAutoPrediction() {
+      generatePrediction();
+      const nextMinute = 60000 - (new Date().getSeconds() * 1000);
+      
+      timer = setTimeout(() => {
+        updatePeriodNumber();
+        generatePrediction();
+        timer = setInterval(() => {
+          updatePeriodNumber();
+          generatePrediction();
+        }, 60000);
+      }, nextMinute);
+    }
+
+    function initializePeriod() {
+      const currentTime = new Date();
+      const startOfPeriod = new Date();
+      startOfPeriod.setHours(5, 30, 0, 0);
+
+      const minutesSinceStart = Math.floor((currentTime - startOfPeriod) / (1000 * 60));
+      periodNumber = minutesSinceStart >= 0 ? minutesSinceStart + 1 : 1;
+      document.getElementById("periodNumber").innerText = `Period: ${String(periodNumber).padStart(4, '0')}`;
+    }
+
+    function updatePeriodNumber() {
+      periodNumber += 1;
+      document.getElementById("periodNumber").innerText = `Period: ${String(periodNumber).padStart(4, '0')}`;
+      if (periodNumber > 1440) periodNumber = 1;
+    }
+
+    function generatePrediction() {
+      const patterns = ["dragon", "repeat", "increase", "decrease"];
+      const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+      const bigPairs = ["1+3", "2+4"];
+      const smallPairs = ["6+8", "7+9"];
+      let result;
+
+      const isBig = Math.random() > 0.5;
+
+      switch (selectedPattern) {
+        case "dragon":
+          result = isBig ? `[${bigPairs[Math.floor(Math.random() * bigPairs.length)]}] Big` 
+                         : `[${smallPairs[Math.floor(Math.random() * smallPairs.length)]}] Small`;
+          break;
+        case "repeat":
+          result = isBig ? `[${bigPairs[0]}] Big` : `[${smallPairs[0]}] Small`;
+          break;
+        case "increase":
+          result = Math.random() < 0.3 ? `[${smallPairs[Math.floor(Math.random() * smallPairs.length)]}] Small`
+                                       : `[${bigPairs[Math.floor(Math.random() * bigPairs.length)]}] Big`;
+          break;
+        case "decrease":
+          result = Math.random() < 0.3 ? `[${bigPairs[Math.floor(Math.random() * bigPairs.length)]}] Big`
+                                       : `[${smallPairs[Math.floor(Math.random() * smallPairs.length)]}] Small`;
+          break;
+      }
+
+      document.getElementById("prediction").innerText = result;
+      addToHistory(result); // Add to history
+    }
+
+    function addToHistory(prediction) {
+      history.unshift({ period: String(periodNumber).padStart(4, '0'), result: prediction });
+      if (history.length > 10) history.pop(); // Keep only last 10 entries
+      updateHistoryDisplay();
+    }
+
+    function updateHistoryDisplay() {
+      const historyList = document.getElementById("historyList");
+      historyList.innerHTML = history.map(item => 
+        `<div class="history-item"><span>Period ${item.period}</span><span>${item.result}</span></div>`
+      ).join('');
+    }
+
+    function showErrorModal() {
+      document.getElementById("errorModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("errorModal").style.display = "none";
+    }
+
+    function openAdjustPeriodModal() {
+      document.getElementById("adjustPeriodModal").style.display = "flex";
+    }
+
+    function closeAdjustPeriodModal() {
+      document.getElementById("adjustPeriodModal").style.display = "none";
+    }
+
+    function updatePeriod() {
+      const newPeriod = document.getElementById("newPeriod").value;
+      if (newPeriod && !isNaN(newPeriod)) {
+        periodNumber = parseInt(newPeriod);
+        document.getElementById("periodNumber").innerText = `Period: ${String(periodNumber).padStart(4, '0')}`;
+        closeAdjustPeriodModal();
+      } else {
+        alert("Please enter a valid period number.");
+      }
+    }
+  </script>
 </body>
 </html>
