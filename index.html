@@ -5,132 +5,243 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Big and Small Prediction</title>
   <style>
+    :root {
+      --bg-dark: linear-gradient(135deg, #1e3c72, #2a5298);
+      --bg-light: linear-gradient(135deg, #e0eafc, #cfdef3);
+      --card-dark: rgba(255, 255, 255, 0.05);
+      --card-light: rgba(255, 255, 255, 0.9);
+      --text-dark: #ffffff;
+      --text-light: #1e3c72;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
     body {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
-      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-dark);
       min-height: 100vh;
       margin: 0;
+      padding: 20px;
+      overflow: hidden;
+      transition: background 0.5s ease, color 0.5s ease;
+      cursor: none;
+    }
+
+    body.light {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    .custom-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: rgba(0, 212, 255, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      transition: transform 0.1s ease;
     }
 
     .login-container, .container {
       text-align: center;
-      padding: 30px;
-      background-color: rgba(30, 30, 30, 0.85);
-      border-radius: 10px;
-      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
-      max-width: 400px;
+      padding: 40px;
+      background: var(--card-dark);
+      border-radius: 25px;
+      box-shadow: var(--shadow);
+      max-width: 550px;
+      width: 100%;
+      backdrop-filter: blur(15px);
+      transition: all 0.5s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    body.light .login-container, body.light .container {
+      background: var(--card-light);
+    }
+
+    h2, h3 {
+      font-weight: 600;
+      margin-bottom: 25px;
+      letter-spacing: 1.2px;
     }
 
     .input-field {
-      padding: 12px;
-      margin: 10px 0;
-      width: 90%;
-      max-width: 300px;
+      padding: 15px;
+      margin: 15px 0;
+      width: 100%;
+      max-width: 350px;
       font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #444;
-      color: #ffffff;
-      background-color: #333333;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-dark);
+      transition: all 0.3s ease;
     }
 
-    .button {
-      padding: 12px 20px;
-      font-size: 18px;
-      color: #ffffff;
-      background-color: #007BFF;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-      width: 100%;
-      max-width: 300px;
+    body.light .input-field {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-light);
     }
 
-    .get-pass-button, .adjust-period-button {
-      padding: 12px 20px;
-      font-size: 18px;
-      color: #ffffff;
-      background-color: #FF5733;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-      width: 100%;
-      max-width: 300px;
+    .input-field:focus {
+      border-color: #00d4ff;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+      outline: none;
     }
 
-    .back-to-login-button {
-      padding: 12px 20px;
-      font-size: 18px;
-      color: #ffffff;
-      background-color: #28a745;
+    .button, .get-pass-button, .adjust-period-button, .back-to-login-button {
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 12px;
       cursor: pointer;
-      margin-top: 20px;
+      margin: 12px 0;
       width: 100%;
-      max-width: 300px;
+      max-width: 350px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+
+    .button { background: #00b4d8; }
+    .get-pass-button { background: #ff6f61; }
+    .adjust-period-button { background: #ff9f1c; }
+    .back-to-login-button { background: #2ecc71; }
+
+    .button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    .button:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    .button:hover, .get-pass-button:hover, .adjust-period-button:hover, .back-to-login-button:hover {
+      transform: scale(1.05);
+      filter: brightness(1.15);
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 12px 25px;
+      background: #ffffff20;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    body.light .theme-toggle { background: #00000020; }
 
     .notice {
-      background-color: rgba(255, 204, 0, 0.2);
+      background: rgba(255, 204, 0, 0.15);
       border: 1px solid #ffcc00;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 30px;
-      font-size: 18px;
-      line-height: 1.5;
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0;
+      font-size: 16px;
+      line-height: 1.6;
+      transition: background 0.5s ease;
     }
 
     .period-box {
-      display: inline-block;
-      padding: 15px 25px;
-      border: 3px solid #ff4d4d;
-      border-radius: 10px;
-      font-size: 24px;
-      color: #ff4d4d;
+      padding: 25px 40px;
+      border: 4px solid #ff4d4d;
+      border-radius: 18px;
+      font-size: 30px;
       font-weight: bold;
-      margin-top: 20px;
-      background-color: rgba(255, 77, 77, 0.2);
+      color: #ff4d4d;
+      background: rgba(255, 77, 77, 0.15);
+      margin: 25px 0;
+      animation: pulse 2s infinite;
+    }
+
+    .countdown {
+      font-size: 20px;
+      color: #00d4ff;
+      margin-top: 10px;
+      font-weight: 500;
     }
 
     .prediction {
-      margin-top: 30px;
-      font-size: 28px;
-      font-weight: bold;
+      margin: 40px 0;
+      font-size: 40px;
+      font-weight: 700;
+      color: #00d4ff;
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+      transition: all 0.5s ease;
     }
 
-    .spacing {
-      margin-top: 15px;
-    }
-
-    /* History List Styles */
-    .history-container {
-      margin-top: 20px;
-      max-height: 200px;
-      overflow-y: auto;
-      background-color: rgba(255, 255, 255, 0.1);
+    .progress-bar {
+      width: 100%;
+      max-width: 350px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 5px;
-      padding: 10px;
+      margin: 20px auto;
+      overflow: hidden;
     }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: #00d4ff;
+      transition: width 60s linear;
+    }
+
+    .history-container {
+      margin-top: 35px;
+      max-height: 350px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 18px;
+      padding: 20px;
+      transition: background 0.5s ease;
+    }
+
+    body.light .history-container { background: rgba(0, 0, 0, 0.05); }
 
     .history-item {
-      padding: 10px;
-      border-bottom: 1px solid #444;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       font-size: 16px;
       display: flex;
       justify-content: space-between;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    .history-item:last-child {
-      border-bottom: none;
+    .history-item:hover {
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    /* Modal Styles */
+    body.light .history-item { color: #2a5298; }
+
+    .history-item:last-child { border-bottom: none; }
+    .history-item.big { color: #00d4ff; }
+    .history-item.small { color: #ff6f61; }
+
     .modal {
       display: none;
       position: fixed;
@@ -138,48 +249,97 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.9);
       justify-content: center;
       align-items: center;
+      animation: fadeIn 0.4s ease;
     }
 
     .modal-content {
-      background-color: #333;
-      padding: 30px;
-      border-radius: 10px;
+      background: #2a2a2a;
+      padding: 45px;
+      border-radius: 25px;
       text-align: center;
       color: #fff;
-      width: 300px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: var(--shadow);
+      transition: all 0.5s ease;
     }
+
+    body.light .modal-content { background: #ffffff; color: #1e3c72; }
 
     .modal-button {
-      margin-top: 20px;
-      padding: 12px 20px;
-      background-color: #007BFF;
+      margin: 15px 0;
+      padding: 15px 30px;
+      background: #00b4d8;
       border: none;
-      border-radius: 5px;
-      color: white;
+      border-radius: 12px;
+      color: #fff;
       cursor: pointer;
+      transition: all 0.3s ease;
     }
 
+    .modal-button:hover { background: #0096c7; transform: scale(1.05); }
+
     .modal-input {
-      padding: 12px;
+      padding: 15px;
       font-size: 16px;
       width: 100%;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #444;
-      background-color: #333;
+      margin: 15px 0;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
+    }
+
+    body.light .modal-input {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.8);
+      color: #1e3c72;
+    }
+
+    canvas#particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 480px) {
+      .login-container, .container, .modal-content { padding: 30px; }
+      .period-box { font-size: 26px; }
+      .prediction { font-size: 32px; }
+      .button, .get-pass-button, .adjust-period-button, .back-to-login-button {
+        font-size: 14px;
+        padding: 12px 20px;
+      }
     }
   </style>
 </head>
 <body>
+  <canvas id="particles"></canvas>
+  <div class="custom-cursor" id="cursor"></div>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+
   <!-- Login Page -->
   <div class="login-container" id="loginContainer">
     <h2>Login</h2>
-    <input type="text" id="userId" class="input-field" placeholder="User ID" required>
-    <input type="password" id="password" class="input-field" placeholder="Password" required>
+    <input type="text" id="userId" class="input-field" placeholder="User ID" required aria-label="User ID">
+    <input type="password" id="password" class="input-field" placeholder="Password" required aria-label="Password">
     <button class="button" onclick="login()">Login</button>
     <button class="get-pass-button" id="getPassButton" onclick="showGetPassInfo()">Get Pass</button>
   </div>
@@ -187,7 +347,9 @@
   <!-- Prediction Page -->
   <div class="container" id="predictionContainer" style="display: none;">
     <div class="period-box" id="periodNumber">Period: 0003</div>
+    <div class="countdown" id="countdown">Next Prediction in: 60s</div>
     <div class="prediction" id="prediction">--</div>
+    <div class="progress-bar"><div class="progress" id="progress"></div></div>
     <button class="adjust-period-button" onclick="openAdjustPeriodModal()">Adjust Period</button>
     <div class="history-container" id="historyList"></div>
   </div>
@@ -205,13 +367,74 @@
   <div class="modal" id="adjustPeriodModal">
     <div class="modal-content">
       <h2>Adjust Period</h2>
-      <input type="number" id="newPeriod" class="modal-input" placeholder="Enter new period number" required>
+      <input type="number" id="newPeriod" class="modal-input" placeholder="Enter new period number" required aria-label="New Period Number">
       <button class="modal-button" onclick="updatePeriod()">Update Period</button>
       <button class="modal-button" onclick="closeAdjustPeriodModal()">Cancel</button>
     </div>
   </div>
 
   <script>
+    // Particle Background
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particlesArray = [];
+    const numberOfParticles = 50;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.01;
+      }
+      draw() {
+        ctx.fillStyle = 'rgba(0, 212, 255, 0.5)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+        if (particlesArray[i].size <= 0.2) {
+          particlesArray.splice(i, 1);
+          i--;
+          particlesArray.push(new Particle());
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    // Custom Cursor
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.pageX + 'px';
+      cursor.style.top = e.pageY + 'px';
+    });
+
+    // Main Logic
     function getExpectedPassword() {
       const today = new Date();
       const year = today.getFullYear();
@@ -241,8 +464,8 @@
         <div class="container">
           <h2>NOTICE</h2>
           <div class="notice">
-            <p>PERFORMANCE DEPENDS UPON DEPOSIT :</p>
-            <ul>
+            <p>PERFORMANCE DEPENDS UPON DEPOSIT:</p>
+            <ul style="text-align: left;">
               <li>1000 == 40% WORK</li>
               <li>2000 == 60% WORK</li>
               <li>5000 == 80% WORK</li>
@@ -251,9 +474,7 @@
             </ul>
           </div>
           <a href="https://bmbin.com/#/register?invitationCode=15823266523" class="button">Register & Deposit</a>
-          <div class="spacing"></div>
-          <br>
-          <a href="https://t.me/TeamEarning_bot" class="button contact-button">Message for Pass</a>
+          <a href="https://t.me/TeamEarning_bot" class="button">Message for Pass</a>
           <button class="back-to-login-button" onclick="backToLogin()">Back to Login</button>
           <h3>HIGH DEPOSIT HIGH PERFORMANCE</h3>
         </div>`;
@@ -269,16 +490,37 @@
 
     function startAutoPrediction() {
       generatePrediction();
+      updateCountdown();
       const nextMinute = 60000 - (new Date().getSeconds() * 1000);
       
       timer = setTimeout(() => {
         updatePeriodNumber();
         generatePrediction();
+        resetProgressBar();
         timer = setInterval(() => {
           updatePeriodNumber();
           generatePrediction();
+          resetProgressBar();
         }, 60000);
       }, nextMinute);
+    }
+
+    function updateCountdown() {
+      let secondsLeft = 60 - new Date().getSeconds();
+      const countdown = document.getElementById("countdown");
+      countdown.innerText = `Next Prediction in: ${secondsLeft}s`;
+      setInterval(() => {
+        secondsLeft = 60 - new Date().getSeconds();
+        countdown.innerText = `Next Prediction in: ${secondsLeft}s`;
+      }, 1000);
+    }
+
+    function resetProgressBar() {
+      const progress = document.getElementById("progress");
+      progress.style.width = "0%";
+      setTimeout(() => {
+        progress.style.width = "100%";
+      }, 10);
     }
 
     function initializePeriod() {
@@ -324,21 +566,34 @@
           break;
       }
 
-      document.getElementById("prediction").innerText = result;
-      addToHistory(result); // Add to history
+      const predictionElement = document.getElementById("prediction");
+      predictionElement.style.opacity = 0;
+      setTimeout(() => {
+        predictionElement.innerText = result;
+        predictionElement.style.opacity = 1;
+        playSound();
+      }, 300);
+      addToHistory(result);
     }
 
     function addToHistory(prediction) {
       history.unshift({ period: String(periodNumber).padStart(4, '0'), result: prediction });
-      if (history.length > 10) history.pop(); // Keep only last 10 entries
+      if (history.length > 10) history.pop();
       updateHistoryDisplay();
     }
 
     function updateHistoryDisplay() {
       const historyList = document.getElementById("historyList");
       historyList.innerHTML = history.map(item => 
-        `<div class="history-item"><span>Period ${item.period}</span><span>${item.result}</span></div>`
+        `<div class="history-item ${item.result.includes('Big') ? 'big' : 'small'}">
+          <span>Period ${item.period}</span><span>${item.result}</span>
+        </div>`
       ).join('');
+    }
+
+    function playSound() {
+      const audio = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+      audio.play().catch(() => console.log("Sound blocked by browser"));
     }
 
     function showErrorModal() {
@@ -366,6 +621,10 @@
       } else {
         alert("Please enter a valid period number.");
       }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light');
     }
   </script>
 </body>
